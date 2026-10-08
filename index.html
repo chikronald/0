@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click Color Changer</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Fullscreen clickable background area */
+        .color-screen {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        /* Prompt text in the center */
+        .instruction {
+            color: #ffffff;
+            font-size: 2rem;
+            font-weight: bold;
+            text-shadow: 0px 2px 8px rgba(0,0,0,0.5);
+            pointer-events: none; /* Prevents text from blocking the click */
+            user-select: none;
+        }
+
+        /* Control panel at the top */
+        .controls {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .color-picker-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        input[type="color"] {
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Control panel to change the color shades -->
+    <div class="controls">
+        <div class="color-picker-group">
+            <label for="color1">Red:</label>
+            <input type="color" id="color1" value="#ff4d4d">
+        </div>
+        <div class="color-picker-group">
+            <label for="color2">Yellow:</label>
+            <input type="color" id="color2" value="#ffeb3b">
+        </div>
+        <div class="color-picker-group">
+            <label for="color3">Green:</label>
+            <input type="color" id="color3" value="#4caf50">
+        </div>
+    </div>
+
+    <!-- Main clickable background -->
+    <div class="color-screen" id="screen">
+        <div class="instruction" id="text">Click anywhere to change color</div>
+    </div>
+
+    <script>
+        const screen = document.getElementById('screen');
+        const text = document.getElementById('text');
+        
+        // Grab the color pickers
+        const redInput = document.getElementById('color1');
+        const yellowInput = document.getElementById('color2');
+        const greenInput = document.getElementById('color3');
+
+        // Track the current step (0 = Red, 1 = Yellow, 2 = Green)
+        let currentIndex = 0;
+
+        // Function to update the background color based on the current step
+        function updateColor() {
+            const colors = [redInput.value, yellowInput.value, greenInput.value];
+            screen.style.backgroundColor = colors[currentIndex];
+            
+            // Dynamic text adjustment for better contrast on light yellow backgrounds
+            if (currentIndex === 1) {
+                text.style.color = '#333333';
+                text.style.textShadow = 'none';
+            } else {
+                text.style.color = '#ffffff';
+                text.style.textShadow = '0px 2px 8px rgba(0,0,0,0.5)';
+            }
+        }
+
+        // Cycle index forward on click
+        screen.addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % 3;
+            updateColor();
+        });
+
+        // Update the screen instantly if a user adjusts a color picker palette
+        redInput.addEventListener('input', () => { if (currentIndex === 0) updateColor(); });
+        yellowInput.addEventListener('input', () => { if (currentIndex === 1) updateColor(); });
+        greenInput.addEventListener('input', () => { if (currentIndex === 2) updateColor(); });
+
+        // Set initial color state on page load
+        updateColor();
+    </script>
+</body>
+</html>
